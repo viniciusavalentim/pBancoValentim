@@ -1,0 +1,16 @@
+C:\Projects\pBancoValentim\pBancoValentim\bin\Debug\net5.0\pBancoValentim.exe
+C:\Projects\pBancoValentim\pBancoValentim\bin\Debug\net5.0\pBancoValentim.deps.json
+C:\Projects\pBancoValentim\pBancoValentim\bin\Debug\net5.0\pBancoValentim.runtimeconfig.json
+C:\Projects\pBancoValentim\pBancoValentim\bin\Debug\net5.0\pBancoValentim.runtimeconfig.dev.json
+C:\Projects\pBancoValentim\pBancoValentim\bin\Debug\net5.0\pBancoValentim.dll
+C:\Projects\pBancoValentim\pBancoValentim\bin\Debug\net5.0\pBancoValentim.pdb
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\pBancoValentim.csproj.AssemblyReference.cache
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\pBancoValentim.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\pBancoValentim.AssemblyInfoInputs.cache
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\pBancoValentim.AssemblyInfo.cs
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\pBancoValentim.csproj.CoreCompileInputs.cache
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\pBancoValentim.dll
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\refint\pBancoValentim.dll
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\pBancoValentim.pdb
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\pBancoValentim.genruntimeconfig.cache
+C:\Projects\pBancoValentim\pBancoValentim\obj\Debug\net5.0\ref\pBancoValentim.dll
