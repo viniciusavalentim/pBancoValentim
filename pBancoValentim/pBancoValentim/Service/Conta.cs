@@ -1,7 +1,9 @@
 ﻿using pBancoValentim.Service;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +13,7 @@ namespace pBancoValentim.Entities
 {
     internal class Conta : Cliente
     {
-        public double SaldoDaConta { get; set; }
+        public float SaldoDaConta { get; set; }
         public int Id { get; set; }
 
         public List<Conta> Contas = new List<Conta>();
@@ -25,25 +27,12 @@ namespace pBancoValentim.Entities
             Usuario = usuario;
             Senha = senha;
         }
-        public Conta(string nome, string cpf, DateTime data, string usuario, int senha, double saldoDaConta, int id)
+        public Conta(string nome, string cpf, DateTime data, string usuario, int senha, float saldoDaConta, int id)
             : base(nome, cpf, data, usuario, senha)
         {
             SaldoDaConta = saldoDaConta;
             Id = id;
         }
-
-        //public void CadastrarConta()
-        //{
-        //    Nome = "Vinicius";
-        //    CPF = "44210163813";
-        //    Data = DateTime.Now;
-        //    Usuario = "vini";
-        //    Senha = 1234;
-        //    SaldoDaConta = 0.0;
-
-        //    Contas.Add(new Conta(Nome, CPF, Data, Usuario, Senha, SaldoDaConta));
-
-        //}
 
         public void CadastrarConta()
         {
@@ -94,11 +83,150 @@ namespace pBancoValentim.Entities
             string usuario = Usuario;
             int senha = Senha;
             int id = Id;
+            SaldoDaConta = 5000;
+
 
             ContaCriadaComSucesso(usuario, senha, id);
+            CreatePerson(Nome, CPF, usuario, senha, id, Data, SaldoDaConta);
             Console.ReadKey();
 
+
+
         }
+        public static void CreatePerson(string name, string cpf, string login, int passwordUser, int id, DateTime age, float accountPerson)
+        {
+            Database dataBase = new Database();
+
+            SqlConnection connectionSql = new SqlConnection(dataBase.ConnectionString());    // parametro necessario para SqlConnection é uma string
+            SqlCommand commandSql = new SqlCommand();                                              //criando uma variavel para fazer comandos do sql                                                                                          // que identifica o caminho de conexão com o banco
+            connectionSql.Open(); //Abrindo conexão sql
+
+            string commandInsert = $"INSERT INTO Person (Name, Age, CPF, Login, PasswordUser, Id, AccountBalance) VALUES ('{name}','{age}','{cpf}','{login}','{passwordUser}','{id}','{accountPerson}')";
+
+            commandSql = new SqlCommand(commandInsert, connectionSql);
+            commandSql.ExecuteNonQuery();
+            connectionSql.Close(); //fecha conexão sql
+
+        }
+
+        public static void AddAccountBalance(int id, double balance)
+        {
+            Database dataBase = new Database();
+            SqlConnection connectionSql = new SqlConnection(dataBase.ConnectionString());
+            try
+            {
+                connectionSql.Open();
+
+                // Use parâmetros para evitar injeção de SQL
+                string cmdSelect = $"SELECT * FROM Person WHERE Id = {id}";
+
+                using (SqlCommand commandSql = new SqlCommand(cmdSelect, connectionSql))
+                {
+                    // Execute a consulta
+                    using (SqlDataReader reader = commandSql.ExecuteReader())
+                    {
+                        if (reader.Read()) //enquanto leitor for verdadeiro
+                        {
+                            balance += reader.GetDouble(6);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Lide com exceções, registre ou notifique conforme necessário
+                Console.WriteLine($"Erro ao fazer depósito conta: {ex.Message}");
+            }
+            finally
+            {
+                // Certifique-se de fechar a conexão, independentemente do resultado
+                connectionSql.Close();
+            }
+
+            // Se não encontrou a conta no banco de dados, retorne falso
+
+            UpdateAccountBalance(id, balance);
+        }
+        public static void RemoveAccountBalance(int id, double balance, double aux)
+        {
+            Database dataBase = new Database();
+            SqlConnection connectionSql = new SqlConnection(dataBase.ConnectionString());
+            try
+            {
+                connectionSql.Open();
+
+                // Use parâmetros para evitar injeção de SQL
+                string cmdSelect = $"SELECT * FROM Person WHERE Id = {id}";
+
+                using (SqlCommand commandSql = new SqlCommand(cmdSelect, connectionSql))
+                {
+                    // Execute a consulta
+                    using (SqlDataReader reader = commandSql.ExecuteReader())
+                    {
+                        if (reader.Read()) //enquanto leitor for verdadeiro
+                        {
+                            aux = reader.GetDouble(6);
+                            aux -= balance;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Lide com exceções, registre ou notifique conforme necessário
+                Console.WriteLine($"Erro ao fazer saque conta: {ex.Message}");
+            }
+            finally
+            {
+                // Certifique-se de fechar a conexão, independentemente do resultado
+                connectionSql.Close();
+            }
+
+            // Se não encontrou a conta no banco de dados, retorne falso
+
+
+            UpdateAccountBalance(id, aux);
+        }
+        public static void UpdateAccountBalance(int id, double balance)
+        {
+            Database dataBase = new Database();
+
+            SqlConnection connectionSql = new SqlConnection(dataBase.ConnectionString());    // parametro necessario para SqlConnection é uma string
+            SqlCommand commandSql = new SqlCommand();                                              //criando uma variavel para fazer comandos do sql                                                                                          // que identifica o caminho de conexão com o banco
+            connectionSql.Open(); //Abrindo conexão sql
+
+            string commandInsert = $"SELECT * FROM Person Update person set AccountBalance = {balance} where id = {id}";
+
+            commandSql = new SqlCommand(commandInsert, connectionSql);
+            commandSql.ExecuteNonQuery();
+            connectionSql.Close(); //fecha conexão sql
+        }
+        public static void GetPerson()
+        {
+            Database dataBase = new Database();
+
+            SqlConnection connectionSql = new SqlConnection(dataBase.ConnectionString());    // parametro necessario para SqlConnection é uma string
+            SqlCommand commandSql = new SqlCommand();                                              //criando uma variavel para fazer comandos do sql                                                                                          // que identifica o caminho de conexão com o banco
+            connectionSql.Open(); //Abrindo conexão sql
+
+            string cmdInsert = $"SELECT * FROM Person WHERE idade=19";
+
+            commandSql = new SqlCommand(cmdInsert, connectionSql);
+            commandSql.ExecuteNonQuery();
+
+            using (SqlDataReader read = commandSql.ExecuteReader())
+            {
+
+                while (read.Read()) //enquanto leitor for verdadeiro
+                {
+                    Console.WriteLine("\nName: {0}", read.GetString(0)); //{0} posição da variavel q vai informar, parametro 0, cada linha começa no zero
+                    Console.WriteLine("Idade: {0}", read.GetInt32(1));
+                }
+            }
+
+            Console.ReadKey();
+        }
+
 
         public void Logar()
         {
@@ -127,6 +255,7 @@ namespace pBancoValentim.Entities
                 Console.WriteLine("* Você Logou *\nAperte a tecla [Enter] para continuar!");
                 Console.ReadKey();
                 OpcoesBancariasDoCliente(login, senha, id);
+                Console.ReadKey();
 
             }
             else
@@ -153,59 +282,77 @@ namespace pBancoValentim.Entities
             }
 
         }
-
         public void OpcoesBancariasDoCliente(string usuario, int senha, int id)
         {
-            foreach (Conta obj in Contas)
+            Console.Clear();
+            Cabecalho();
+            Console.WriteLine(" [ Operações bancarias ] ");
+            Console.WriteLine("[1] - Sacar");
+            Console.WriteLine("[2] - Depositar");
+            Console.WriteLine("[3] - Tranferências");
+            Console.WriteLine("[4] - Voltar ao Menu Incial");
+            int opcaoDoCliente = int.Parse(Console.ReadLine());
+
+            switch (opcaoDoCliente)
             {
-                if (usuario == obj.Usuario && senha == obj.Senha && id == Id)
-                {
-                    Console.Clear();
-                    Cabecalho();
-                    Console.WriteLine($"Fico feliz em estar aqui novamente Sr(a) {obj.Nome}!\n");
-                    Console.WriteLine($"Dados do usuário: \n| Nome: {obj.Nome}\n| Aniversário: {obj.Data}\n| CPF: {obj.CPF}\n| Saldo: ${obj.SaldoDaConta}\n| ID: #{obj.Id}\n\n");
-
-                    Console.WriteLine(" [ Operações bancarias ] ");
-                    Console.WriteLine("[1] - Sacar");
-                    Console.WriteLine("[2] - Depositar");
-                    Console.WriteLine("[3] - Tranferências");
-                    Console.WriteLine("[4] - Voltar ao Menu Incial");
-                    int opcaoDoCliente = int.Parse(Console.ReadLine());
-
-                    switch (opcaoDoCliente)
-                    {
-                        case 1:
-                            Saque(usuario, senha, id);
-                            break;
-                        case 2:
-                            Deposito(usuario, senha, id);
-                            break;
-                        case 3:
-                            Transferencia(usuario, senha, id);
-                            break;
-                        case 4:
-                            Sair();
-                            break;
-                        default:
-                            break;
-                    }
-
-                    Console.ReadKey();
-                }
+                case 1:
+                    Saque(usuario, senha, id);
+                    break;
+                case 2:
+                    Deposito(usuario, senha, id);
+                    break;
+                case 3:
+                    Transferencia(usuario, senha, id);
+                    break;
+                case 4:
+                    Sair();
+                    break;
+                default:
+                    break;
             }
+
+            Console.ReadKey();
         }
 
-        public bool ValidarConta(string usuario, int senha, int id)
+        public bool ValidarConta(string login, int passwordUser, int id)
         {
-            foreach (Conta Obj in Contas)
+
+            Database dataBase = new Database();
+
+            SqlConnection connectionSql = new SqlConnection(dataBase.ConnectionString());    
+            try
             {
-                if (Obj.Usuario == usuario && Obj.Senha == senha && id == Obj.Id)
+                connectionSql.Open();
+
+                // Use parâmetros para evitar injeção de SQL
+                string cmdSelect = $"SELECT * FROM Person WHERE Login = '{login}' AND PasswordUser = {passwordUser} AND Id = {id}";
+
+                using (SqlCommand commandSql = new SqlCommand(cmdSelect, connectionSql))
                 {
-                    return true;
+                    // Execute a consulta
+                    using (SqlDataReader reader = commandSql.ExecuteReader())
+                    {
+                        // Se houver uma linha no resultado, a conta é válida
+                        if (reader.HasRows)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
-            return false;
+            catch (Exception ex)
+            {
+                // Lide com exceções, registre ou notifique conforme necessário
+                Console.WriteLine($"Erro ao fazer depósito conta: {ex.Message}");
+            }
+            finally
+            {
+                // Certifique-se de fechar a conexão, independentemente do resultado
+                connectionSql.Close();
+            }
 
+            // Se não encontrou a conta no banco de dados, retorne falso
+            return false;
         }
 
         public void Deposito(string usuario, int senha, int id)
@@ -213,26 +360,12 @@ namespace pBancoValentim.Entities
             Console.Clear();
             Cabecalho();
             Console.WriteLine("Digite quanto quer depositar: ");
-            Console.Write("$"); double deposito = double.Parse(Console.ReadLine());
-            foreach (Conta obj in Contas)
-            {
-                if (usuario == obj.Usuario && senha == obj.Senha)
-                {
-                    obj.SaldoDaConta += deposito;
-                    Console.Write("Depositando, aguarde");
-                    Thread.Sleep(1000);
-                    Console.Write(".");
-                    Thread.Sleep(1000);
-                    Console.Write(".");
-                    Thread.Sleep(1000);
-                    Console.WriteLine(".");
-                    Console.WriteLine($"| Você Depositou ${deposito} reais\n");
-                    Console.WriteLine("Deposito finalizado, Saldo atual: $" + obj.SaldoDaConta);
-                    Console.WriteLine("Aperte a tecla [Enter] para continuar!");
-                }
-            }
+            Console.Write("$"); double balance = double.Parse(Console.ReadLine());
 
+            AddAccountBalance(id, balance);
 
+            Console.WriteLine("Sua operação foi realizada com sucesso ");
+            Console.WriteLine("Precione [enter] para sair =))");
             Console.ReadKey();
             OpcoesBancariasDoCliente(usuario, senha, id);
         }
@@ -242,95 +375,55 @@ namespace pBancoValentim.Entities
             Console.Clear();
             Cabecalho();
             Console.WriteLine("Digite quanto quer Sacar: ");
-            foreach (Conta obj in Contas)
-            {
-                if (usuario == obj.Usuario && senha == obj.Senha && id == Id)
-                {
-                    Console.WriteLine($"Seu Limite de saque é de: ${obj.SaldoDaConta} reais");
-                    Console.Write("$"); double saque = double.Parse(Console.ReadLine());
+            Console.Write("$"); double balance = double.Parse(Console.ReadLine());
+            double aux = 0;
 
-                    while (saque > obj.SaldoDaConta)
-                    {
-                        Console.WriteLine($"O seu saldo é de ${obj.SaldoDaConta} reais\nPortanto não é possivel sacar ${saque} reais!\nTente novamente: ");
-                        Console.WriteLine("Ou aperte a tecla [0] para voltar");
-                        saque = int.Parse(Console.ReadLine());
-                        if (saque == 0)
-                        {
-                            OpcoesBancariasDoCliente(usuario, senha, id);
-                        }
-                    }
+            RemoveAccountBalance(id, balance,aux);
 
-                    obj.SaldoDaConta -= saque;
-                    Console.Write("Realizando o saque, aguarde");
-                    Thread.Sleep(1000);
-                    Console.Write(".");
-                    Thread.Sleep(1000);
-                    Console.Write(".");
-                    Thread.Sleep(1000);
-                    Console.WriteLine(".");
-                    Console.WriteLine($"| Você Sacou ${saque} reais\n");
-                    Console.WriteLine("Saque finalizado, Saldo atual: $" + obj.SaldoDaConta);
-                    Console.WriteLine("Aperte a tecla [Enter] para continuar!");
-
-                    Console.ReadKey();
-                    OpcoesBancariasDoCliente(usuario, senha, id);
-                }
-            }
-
-
+            Console.WriteLine("Sua operação foi realizada com sucesso ");
+            Console.WriteLine("Precione [enter] para sair =))");
             Console.ReadKey();
             OpcoesBancariasDoCliente(usuario, senha, id);
         }
 
-        public void Transferencia(string usuario, int senha, int id)
+        public void Transferencia(string login, int senha, int id)
         {
             Console.Clear();
             Cabecalho();
-            double transferencia = 0;
-            string usuario2 = null;
+            double aux = 0;
+            double transfer = 0;
             int id2 = 0;
-            foreach (Conta obj in Contas)
-            {
-                if (usuario == obj.Usuario && senha == obj.Senha && id == Id)
-                {
-                    Console.WriteLine($"Digite quanto quer Transferir [Saldo atual: ${obj.SaldoDaConta}]: ");
-                    Console.Write("$"); transferencia = double.Parse(Console.ReadLine());
-                    while (transferencia > obj.SaldoDaConta)
-                    {
-                        Console.WriteLine($"O seu saldo é de ${obj.SaldoDaConta} reais\nPortanto não é possivel transferir ${transferencia} reais!\nTente novamente: ");
-                        Console.WriteLine("Ou aperte a tecla [0] para voltar");
-                        transferencia = int.Parse(Console.ReadLine());
-                        if (transferencia == 0)
-                        {
-                            OpcoesBancariasDoCliente(usuario, senha, id);
-                        }
-                    }
-                    Console.WriteLine("\nPara quem você quer transferir? ");
-                    Console.Write("Digite o Usuário da pessoa que deseja enviar o dinheiro: ");
-                    usuario2 = Console.ReadLine();
-                    Console.WriteLine("Digite o Id da conta de quem vai receber: ");
-                    id2 = int.Parse(Console.ReadLine());
-                    obj.SaldoDaConta -= transferencia;
-                    Console.Write("Realizando a Transferência, aguarde");
-                    Thread.Sleep(1000);
-                    Console.Write(".");
-                    Thread.Sleep(1000);
-                    Console.Write(".");
-                    Thread.Sleep(1000);
-                    Console.WriteLine(".");
-                    Console.WriteLine("Transferencia finalizada, Saldo atual: $" + obj.SaldoDaConta);
-                    Console.WriteLine("Aperte a tecla [Enter] para continuar!");
-                }
-            }
-            foreach (Conta obj in Contas)
-            {
-                if (usuario2 == obj.Usuario && id2 == obj.Id)
-                {
-                    obj.SaldoDaConta += transferencia;
-                }
-            }
+            Console.WriteLine($"Digite quanto quer Transferir ");
+            Console.Write("$"); transfer = double.Parse(Console.ReadLine());
+            Console.WriteLine("\n\nPara quem você deseja transferir? ");
+            Console.WriteLine("Digite o Id da conta de quem vai receber: ");
+            id2 = int.Parse(Console.ReadLine());
+
+            RemoveAccountBalance(id, transfer, aux);
+            AddAccountBalance(id2, transfer);
+
+            Console.Write("Realizando a Transferência, aguarde");
+            Thread.Sleep(1000);
+            Console.Write(".");
+            Thread.Sleep(1000);
+            Console.Write(".");
+            Thread.Sleep(1000);
+            Console.WriteLine(".");
+            Console.WriteLine("Transferencia finalizada");
+            Console.WriteLine("Aperte a tecla [Enter] para continuar!");
+
+            //while (transferencia > obj.SaldoDaConta)
+            //{
+            //    Console.WriteLine($"O seu saldo é de ${obj.SaldoDaConta} reais\nPortanto não é possivel transferir ${transferencia} reais!\nTente novamente: ");
+            //    Console.WriteLine("Ou aperte a tecla [0] para voltar");
+            //    transferencia = int.Parse(Console.ReadLine());
+            //    if (transferencia == 0)
+            //    {
+            //        OpcoesBancariasDoCliente(usuario, senha, id);
+            //    }
+            //}
             Console.ReadKey();
-            OpcoesBancariasDoCliente(usuario, senha, id);
+            OpcoesBancariasDoCliente(login, senha, id);
         }
 
         public bool ValidateCPF(string CPF)

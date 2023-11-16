@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Projects\\pBancoValentim\\pBancoValentim\\pBancoValentim.csproj": {}
+    "C:\\PROJECTS\\C#\\pBancoValentim\\pBancoValentim\\pBancoValentim.csproj": {}
   },
   "projects": {
-    "C:\\Projects\\pBancoValentim\\pBancoValentim\\pBancoValentim.csproj": {
+    "C:\\PROJECTS\\C#\\pBancoValentim\\pBancoValentim\\pBancoValentim.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\pBancoValentim\\pBancoValentim\\pBancoValentim.csproj",
+        "projectUniqueName": "C:\\PROJECTS\\C#\\pBancoValentim\\pBancoValentim\\pBancoValentim.csproj",
         "projectName": "pBancoValentim",
-        "projectPath": "C:\\Projects\\pBancoValentim\\pBancoValentim\\pBancoValentim.csproj",
+        "projectPath": "C:\\PROJECTS\\C#\\pBancoValentim\\pBancoValentim\\pBancoValentim.csproj",
         "packagesPath": "C:\\Users\\vinic\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\pBancoValentim\\pBancoValentim\\obj\\",
+        "outputPath": "C:\\PROJECTS\\C#\\pBancoValentim\\pBancoValentim\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
           "C:\\Users\\vinic\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -43,6 +39,12 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
+          "dependencies": {
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.5, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -54,12 +56,30 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[5.0.0, 5.0.0]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[5.0.17, 5.0.17]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[5.0.0, 5.0.0]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[5.0.0, 5.0.0]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     }

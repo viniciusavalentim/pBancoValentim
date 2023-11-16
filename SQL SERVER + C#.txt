@@ -1,0 +1,44 @@
+SQL SERVER + C#
+
+   public static void CreatePerson(string name, int age)
+   {
+       Database dataBase = new Database();
+
+       SqlConnection connectionSql = new SqlConnection(dataBase.ConnectionString());    // parametro necessario para SqlConnection é uma string
+       SqlCommand commandSql = new SqlCommand();                                              //criando uma variavel para fazer comandos do sql                                                                                          // que identifica o caminho de conexão com o banco
+       connectionSql.Open(); //Abrindo conexão sql
+
+       string cmdInsert = $"INSERT INTO Person (Nome, idade) VALUES ('{name}','{age}')";
+   
+       commandSql = new SqlCommand(cmdInsert, connectionSql);
+       commandSql.ExecuteNonQuery();
+       connectionSql.Close();
+
+       return ;
+   }
+
+   public static void GetPerson()
+   {
+       Database dataBase = new Database();
+
+       SqlConnection connectionSql = new SqlConnection(dataBase.ConnectionString());    // parametro necessario para SqlConnection é uma string
+       SqlCommand commandSql = new SqlCommand();                                              //criando uma variavel para fazer comandos do sql                                                                                          // que identifica o caminho de conexão com o banco
+       connectionSql.Open(); //Abrindo conexão sql
+
+       string cmdInsert = $"SELECT * FROM Person WHERE idade=19";
+
+       commandSql = new SqlCommand(cmdInsert, connectionSql);
+       commandSql.ExecuteNonQuery();
+
+       using (SqlDataReader read = commandSql.ExecuteReader())
+       {
+
+           while (read.Read()) //enquanto leitor for verdadeiro
+           {
+               Console.WriteLine("\nName: {0}", read.GetString(0)); //{0} posição da variavel q vai informar, parametro 0, cada linha começa no zero
+               Console.WriteLine("Idade: {0}", read.GetInt32(1));
+           }
+       }
+
+       Console.ReadKey();
+   }
