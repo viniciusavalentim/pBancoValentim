@@ -1,11 +1,5 @@
 ﻿using pBancoValentim.Entities;
-using pBancoValentim.Service;
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Numerics;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace pBancoValentim
 {

@@ -1,13 +1,7 @@
-﻿using pBancoValentim.Service;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace pBancoValentim.Entities
 {
@@ -195,7 +189,7 @@ namespace pBancoValentim.Entities
             SqlCommand commandSql = new SqlCommand();                                              //criando uma variavel para fazer comandos do sql                                                                                          // que identifica o caminho de conexão com o banco
             connectionSql.Open(); //Abrindo conexão sql
 
-            string commandInsert = $"SELECT * FROM Person Update person set AccountBalance = {balance} where id = {id}";
+            string commandInsert = $"Update person set AccountBalance = {balance} where id = {id}";
 
             commandSql = new SqlCommand(commandInsert, connectionSql);
             commandSql.ExecuteNonQuery();
@@ -227,6 +221,43 @@ namespace pBancoValentim.Entities
             Console.ReadKey();
         }
 
+        public double GetAccountBalance(int id)
+        {
+            Database dataBase = new Database();
+            SqlConnection connectionSql = new SqlConnection(dataBase.ConnectionString());
+            double accountBalance = 0;
+            try
+            {
+                connectionSql.Open();
+
+                // Use parâmetros para evitar injeção de SQL
+                string cmdSelect = $"SELECT * FROM Person WHERE Id = {id}";
+
+                using (SqlCommand commandSql = new SqlCommand(cmdSelect, connectionSql))
+                {
+                    // Execute a consulta
+                    using (SqlDataReader reader = commandSql.ExecuteReader())
+                    {
+                        if (reader.Read()) //enquanto leitor for verdadeiro
+                        {
+                           accountBalance = reader.GetDouble(6);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Lide com exceções, registre ou notifique conforme necessário
+                Console.WriteLine($"Erro ao fazer depósito conta: {ex.Message}");
+            }
+            finally
+            {
+                // Certifique-se de fechar a conexão, independentemente do resultado
+                connectionSql.Close();
+            }
+
+            return accountBalance;
+        }
 
         public void Logar()
         {
@@ -286,6 +317,7 @@ namespace pBancoValentim.Entities
         {
             Console.Clear();
             Cabecalho();
+            Console.WriteLine($"Olá {usuario}! seu saldo atual é de ${GetAccountBalance(id)}");
             Console.WriteLine(" [ Operações bancarias ] ");
             Console.WriteLine("[1] - Sacar");
             Console.WriteLine("[2] - Depositar");
