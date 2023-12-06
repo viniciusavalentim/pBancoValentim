@@ -28,7 +28,7 @@ namespace pBancoValentim.Entities
             Id = id;
         }
 
-        public void CadastrarConta()
+        public void CreateAccount()
         {
             Conta conta = new Conta();
             Console.Clear();
@@ -55,7 +55,7 @@ namespace pBancoValentim.Entities
             {
                 Console.WriteLine("CADASTRO INVALIDO! USUARIO MENOR DE IDADE. TECLE [alguma tecla] PARA SAIR");
                 Console.ReadKey();
-                CadastrarConta();
+                CreateAccount();
             }
 
 

@@ -17,7 +17,7 @@ namespace pBancoValentim
                 switch (OpcaoUsuario)
                 {
                     case 1:
-                        conta.CadastrarConta();
+                        conta.CreateAccount();
                         break;
 
                     case 2:
